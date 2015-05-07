@@ -1,9 +1,9 @@
 <?php
 
-namespace PHPixie\Tests\Trace;
+namespace PHPixie\Tests\Tracer\Trace;
 
 /**
- * @coversDefaultClass \PHPixie\Debug\Trace\Element
+ * @coversDefaultClass \PHPixie\Debug\Tracer\Trace\Element
  */
 class ElementTest extends \PHPixie\Test\Testcase
 {
@@ -70,16 +70,11 @@ class ElementTest extends \PHPixie\Test\Testcase
      */
     public function testDefaults()
     {
-        $this->element = new \PHPixie\Debug\Trace\Element(
-            $this->dumper,
-            $this->file,
-            $this->line
+        $this->element = new \PHPixie\Debug\Tracer\Trace\Element(
+            $this->dumper
         );
         
-        $this->assertGetters(
-            $this->file,
-            $this->line
-        );
+        $this->assertGetters();
     }
     
     /**
@@ -135,16 +130,13 @@ class ElementTest extends \PHPixie\Test\Testcase
     }
     
     /**
-     * @covers ::argumentDumps
+     * @covers ::shortArgumentDumps
      * @covers ::<protected>
      */
-    public function testArgumentDumps()
+    public function testShortArgumentDumps()
     {
-        foreach($this->arguments as $key => $argument) {
-            $this->method($this->dumper, 'dump', 'd'.$argument, array($argument), $key);
-        }
-        
-        $this->assertSame(array('d1', 'd2'), $this->element->argumentDumps());
+        $dumps = $this->prepareShortArgumentDumps();
+        $this->assertSame($dumps, $this->element->shortArgumentDumps());
     }
     
     /**
@@ -155,16 +147,59 @@ class ElementTest extends \PHPixie\Test\Testcase
     {
         $this->assertSame('Pixie->find', $this->element->context());
         
+        $dumps = $this->prepareShortArgumentDumps();
+        $context = 'Pixie->find('.implode(', ', $dumps).')';
+        $this->assertSame($context, $this->element->context(true));
+        
         $this->className = null;
         $this->assertSame('find', $this->element()->context());
         
         $this->functionName = null;
-        $this->assertSame(null, $this->element()->context());
+        $element = $this->element();
+        $this->assertSame(null, $element->context());
+        $this->assertSame(null, $element->context(true));
+    }
+    
+    /**
+     * @covers ::line
+     * @covers ::lineContents
+     * @covers ::getNeighboringLines
+     * @covers ::<protected>
+     */
+    public function testLineOrFileUnavailable()
+    {
+        $elements = array();
+        
+        $this->file = null;
+        $elements[] = $this->element();
+        
+        $this->line = null;
+        $this->file = 'pixie';
+        $elements[] = $this->element();
+        
+        foreach($elements as $element) {
+            $this->assertSame(null, $element->line());
+            $this->assertSame(null, $element->lineContents());
+            $this->assertSame(array(), $element->getNeighboringLines(1));
+        }
+    }
+    
+    protected function prepareShortArgumentDumps()
+    {
+        $dumps = array();
+        
+        foreach($this->arguments as $key => $argument) {
+            $dump = 'd'.$key;
+            $this->method($this->dumper, 'shortDump', $dump, array($argument), $key);
+            $dumps[]=$dump;
+        }
+        
+        return $dumps;
     }
     
     protected function assertGetters(
-        $file,
-        $line,
+        $file         = null,
+        $line         = null,
         $functionName = null,
         $arguments    = null,
         $className    = null,
@@ -179,7 +214,7 @@ class ElementTest extends \PHPixie\Test\Testcase
     
     protected function element()
     {
-        return new \PHPixie\Debug\Trace\Element(
+        return new \PHPixie\Debug\Tracer\Trace\Element(
             $this->dumper,
             $this->file,
             $this->line,

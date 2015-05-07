@@ -1,6 +1,6 @@
 <?php
 
-namespace PHPixie\Debug\Trace;
+namespace PHPixie\Debug\Tracer\Trace;
 
 class Element
 {
@@ -14,8 +14,8 @@ class Element
     
     public function __construct(
         $dumper,
-        $file,
-        $line,
+        $file         = null,
+        $line         = null,
         $functionName = null,
         $arguments    = null,
         $className    = null,
@@ -40,6 +40,10 @@ class Element
     
     public function line($offset = 0)
     {
+        if(!$this->lineAndFileAvailable()) {
+            return null;
+        }
+        
         $line = $this->line + $offset;
         
         if($line < 1) {
@@ -82,37 +86,53 @@ class Element
         return $this->type;
     }
     
-    public function argumentDumps()
+    public function shortArgumentDumps()
     {
         $dumps = array();
         foreach($this->arguments as $argument) {
-            $dumps[]= $this->dumper->dump($argument);
+            $dumps[]= $this->dumper->shortDump($argument);
         }
         return $dumps;
     }
     
     public function lineContents($offset = 0)
     {
+        if(!$this->lineAndFileAvailable()) {
+            return null;
+        }
+        
         $this->requireLineContents();
         $line = $this->line($offset);
         return rtrim($this->lineContents[$line-1], "\n\r");
     }
     
-    public function context()
+    public function context($withArguments = false)
     {
+        if($this->functionName === null) {
+            return null;
+        }
+        
         if($this->className !== null) {
-            return $this->className.$this->type.$this->functionName;
+            $context = $this->className.$this->type.$this->functionName;
+            
+        }else{
+            $context = $this->functionName;
         }
         
-        if($this->functionName !==null) {
-            return $this->functionName;
+        if($withArguments) {
+            $shortArgumentDumps = $this->shortArgumentDumps();
+            $context.='('.implode(', ', $shortArgumentDumps).')';
         }
         
-        return null;
+        return $context;
     }
     
     public function getNeighboringLines($maxAmount)
     {
+        if(!$this->lineAndFileAvailable()) {
+            return array();
+        }
+        
         $amount = $maxAmount;
         $this->requireLineContents();
         $count = count($this->lineContents);
@@ -139,6 +159,11 @@ class Element
         }
         
         return range($start, $start + $amount - 1);
+    }
+    
+    protected function lineAndFileAvailable()
+    {
+        return $this->line !== null && $this->file !== null;
     }
     
     protected function requireLineContents()
