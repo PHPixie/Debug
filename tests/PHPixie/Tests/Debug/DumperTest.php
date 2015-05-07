@@ -24,7 +24,7 @@ class DumperTest extends \PHPixie\Test\Testcase
                     array(false, 'false'),
                     array($this, 'DumperTest'),
                     array(array(1, 2), 'array[2]'),
-                    array(null, 'null'),
+                    array(null, 'NULL'),
                     array(5, '5')
                 )
             ),

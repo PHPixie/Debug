@@ -17,20 +17,12 @@ class Dumper
             return $this->dumpString($value);
         }
         
-        if(is_bool($value)) {
-            return $this->dumpBoolean($value);
-        }
-        
         if(is_object($value)) {
             return $this->dumpObject($value);
         }
         
         if(is_array($value)) {
             return $this->dumpArray($value);
-        }
-        
-        if($value === null) {
-            return $this->dumpNull();
         }
         
         return $this->dumpScalar($value);
@@ -44,15 +36,6 @@ class Dumper
         
         $length = strlen($value);
         return "string[$length]";
-    }
-    
-    protected function dumpBoolean($value)
-    {
-        if($value) {
-            return 'true';
-        }
-        
-        return 'false';
     }
     
     protected function dumpObject($object)
@@ -70,13 +53,8 @@ class Dumper
         return "array[$count]";
     }
     
-    protected function dumpNull()
-    {
-        return 'null';
-    }
-    
     protected function dumpScalar($value)
     {
-        return (string) $value;
+        return var_export($value, true);
     }
 }
