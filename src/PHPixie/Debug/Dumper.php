@@ -15,9 +15,14 @@ class Dumper
             return $this->dumpString($value, $short);
         }
         
-        if(!$short && $value instanceof Tracer\Trace)
-        {
-            return $this->dumpTrace($value);
+        if(!$short) {
+            if($value instanceof Tracer\Trace) {
+                return $this->dumpTrace($value);
+            }
+            
+            if($value instanceof \Exception) {
+                return $this->dumpException($value);
+            }
         }
         
         if(is_object($value)) {
@@ -63,23 +68,37 @@ class Dumper
     
     protected function dumpTrace($trace)
     {
-        $string = '';
-        foreach($trace->elements() as $key => $element) {
-            if($key !== 0) {
-                $string.="\n";
-            }
-            
-            $context = $element->context();
-            if($context === null) {
-                $context = $element->file();
-            }
-            
-            $string.= $context;
-            $line = $element->line();
-            if($line !== null) {
-                $string.= ':'.$line;
-            }
+        $elementDumps = array();
+        foreach($trace->elements() as $element) {
+            $elementDumps[] = $this->dumpTraceElement($element);
         }
+        
+        return implode("\n", $elementDumps);
+    }
+    
+    protected function dumpTraceElement($element)
+    {
+        $string = $element->context(true);
+        if($context === null) {
+            $string = $element->file();
+        }
+        
+        $line = $element->line();
+        if($line !== null) {
+            $string.= ':'.$line;
+        }
+        
+        return $string;
+    }
+    
+    protected function dumpException($exception)
+    {
+        $tracer = $this->builder->tracer();
+        $trace  = $tracer->exception($exception);
+        
+        $string = get_class($exception)." :\n";
+        $string.= $exception->getMessage()."\n";
+        $string.= $this->dumpTrace($trace);
         
         return $string;
     }

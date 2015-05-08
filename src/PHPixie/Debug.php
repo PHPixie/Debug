@@ -15,4 +15,14 @@ class Debug
     {
         $this->builder->logger->trace($limit);
     }
+    
+    public function registerHandlers()
+    {
+        $this->builder->errorHandler()->register();
+    }
+    
+    public function loggedItemsDump()
+    {
+        return $this->builder->logger->itemsDump();
+    }
 }
