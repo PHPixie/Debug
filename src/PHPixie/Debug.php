@@ -38,7 +38,7 @@ class Debug
     {
         $log = $this->builder->messages()->log($withTitle, $withTraceArguments, $shortValueDump);
         if($echo) {
-            echo $log;
+            echo $log."\n";
         }
         
         return $log;
@@ -48,7 +48,7 @@ class Debug
     {
         $message = $this->builder->messages()->exception($exception, $backtraceLimit, $neighboringLines);
         if($echo) {
-            echo $message;
+            echo $message."\n";
         }
         
         return $message;
@@ -73,7 +73,7 @@ class Debug
     {
         $dump = static::instance()->dumper()->dump($value, $shortDump);
         if($echo) {
-            echo $dump;
+            echo $dump."\n";
         }
         
         return $dump;

@@ -1,25 +1,12 @@
 <?php
 require_once('vendor/autoload.php');
-$debug = new \PHPixie\Debug();
-$debug->registerHandlers();
 
-class Test
-{
-    public function a()
-    {
-        $this->b();
-    }
-    
-    public function b()
-    {
-        $this->c();
-    }
-    
-    public function c()
-    {
-        substr();
-    }
-}
+use PHPixie\Debug;
+$debug = new Debug();
 
-$test = new Test();
-$test->a();
+Debug::dump(array(1));
+Debug::dump(array(1), true);
+
+$object = (object) array('t' => 1);
+Debug::dump(array(1));
+Debug::dump(array(1), true);
