@@ -136,7 +136,7 @@ class LoggerTest extends \PHPixie\Test\Testcase
     
     protected function prepareTrace($limit = null, $backtraceOffset = 0)
     {
-        $trace = $this->prepareGetTrace($limit, $backtraceOffset);
+        $trace = $this->prepareGetTrace($limit, 1+$backtraceOffset);
         $traceElement = $this->quickMock('\PHPixie\Debug\Tracer\Trace\Element');
         $this->method($trace, 'elements', array($traceElement), array(), 0);
         

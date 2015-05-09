@@ -74,7 +74,7 @@ class DebugTest extends \PHPixie\Test\Testcase
         $string = ob_get_clean();
         
         $this->assertSame('test', $log);
-        $this->assertSame("test\n", $string);
+        $this->assertSame("\ntest\n", $string);
         
         $this->method($this->messages, 'log', 'test', array(false, false, true), 0);
         $this->assertSame('test', $this->debug->dumpLog(false, false, true, false));
@@ -96,7 +96,7 @@ class DebugTest extends \PHPixie\Test\Testcase
         $string = ob_get_clean();
         
         $this->assertSame('test', $message);
-        $this->assertSame("test\n", $string);
+        $this->assertSame("\ntest\n", $string);
         
         $this->method($this->messages, 'exception', 'test', array($exception, 3, 4), 0);
         $this->assertSame('test', $this->debug->exceptionMessage($exception, 3, 4, false));
@@ -150,7 +150,7 @@ class DebugTest extends \PHPixie\Test\Testcase
         $string = ob_get_clean();
         
         $this->assertSame('test', $dump);
-        $this->assertSame("test\n", $string);
+        $this->assertSame("\ntest\n", $string);
         
         $this->method($this->dumper, 'dump', 'test', array(5, true), 0);
         $this->assertSame('test', call_user_func($method, 5, true, false));

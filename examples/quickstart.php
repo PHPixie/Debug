@@ -11,6 +11,8 @@ $object = (object) array('t' => 1);
 Debug::dump($object);
 Debug::dump($object, true);
 
+echo "\n-------\n";
+
 //Logging
 Debug::log("test");
 Debug::trace(1);

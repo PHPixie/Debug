@@ -26,7 +26,7 @@ class Logger
     
     public function trace($limit = null, $backtraceOffset = 0)
     {
-        $trace    = $this->getTrace($limit, $backtraceOffset);
+        $trace    = $this->getTrace($limit, 1+$backtraceOffset);
         $elements = $trace->elements();
         
         $this->items[] = $this->builder->loggerItem(
