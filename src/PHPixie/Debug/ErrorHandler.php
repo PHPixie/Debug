@@ -33,23 +33,15 @@ class ErrorHandler
         });
     }
     
-    public function handleException($exception)
-    {
-        $dumper = $this->builder->dumper();
-        $logger = $this->builder->logger();
-        
-        $string = $dumper->dump($exception);
-        $itemsDump = $logger->itemsDump();
-        if($itemsDump !== null) {
-            $string.= "\n\nLogged items: $itemsDump";
-        }
-        
-        echo $string;
-    }
-    
     protected function handleError($level, $message, $file, $line)
     {
         throw new \ErrorException($message, 0, $level, $file, $line);
+    }
+    
+    protected function handleException($exception)
+    {
+        $messages = $this->builder->messages();
+        echo $messages->exception($exception);
     }
     
     protected function setErrorHandler($callback)

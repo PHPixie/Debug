@@ -15,4 +15,23 @@ class Trace
     {
         return $this->elements;
     }
+    
+    public function asString($withArguments = true)
+    {
+        $string = '';
+        foreach($this->elements as $key => $element) {
+            if($key > 0) {
+                $string.="\n";
+            }
+            
+            $string.= $element->asString($withArguments);
+        }
+        
+        return $string;
+    }
+    
+    public function __toString()
+    {
+        return $this->asString();
+    }
 }

@@ -68,37 +68,13 @@ class Dumper
     
     protected function dumpTrace($trace)
     {
-        $elementDumps = array();
-        foreach($trace->elements() as $element) {
-            $elementDumps[] = $this->dumpTraceElement($element);
-        }
-        
-        return implode("\n", $elementDumps);
-    }
-    
-    protected function dumpTraceElement($element)
-    {
-        $string = $element->context(true);
-        if($context === null) {
-            $string = $element->file();
-        }
-        
-        $line = $element->line();
-        if($line !== null) {
-            $string.= ':'.$line;
-        }
-        
-        return $string;
+        return $trace->asString();
     }
     
     protected function dumpException($exception)
     {
-        $tracer = $this->builder->tracer();
-        $trace  = $tracer->exception($exception);
-        
-        $string = get_class($exception)." :\n";
-        $string.= $exception->getMessage()."\n";
-        $string.= $this->dumpTrace($trace);
+        $string = get_class($exception).": ";
+        $string.= $exception->getMessage();
         
         return $string;
     }

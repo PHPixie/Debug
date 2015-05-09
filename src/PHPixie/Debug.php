@@ -6,14 +6,27 @@ class Debug
 {
     protected $builder;
     
-    public function log($value, $shortDump = false)
+    static protected $instance;
+    
+    public function __construct()
     {
-        $this->builder->logger->log($value, $shortDump, 1);
+        $this->builder = $this->buildBuilder();
+        static::$instance = $this;
     }
     
-    public function trace($limit)
+    public function builder()
     {
-        $this->builder->logger->trace($limit);
+        return $this->builder;
+    }
+    
+    public function logger()
+    {
+        return $this->builder->logger();
+    }
+    
+    public function dumper()
+    {
+        return $this->builder->dumper();
     }
     
     public function registerHandlers()
@@ -21,8 +34,48 @@ class Debug
         $this->builder->errorHandler()->register();
     }
     
-    public function loggedItemsDump()
+    public function dumpLog($withTitle = true, $withTraceArguments = true, $shortValueDump = null, $echo = true)
     {
-        return $this->builder->logger->itemsDump();
+        $log = $this->builder->messages()->log($withTitle, $withTraceArguments, $shortValueDump);
+        if($echo) {
+            echo $log;
+        }
+        
+        return $log;
     }
+    
+    protected function buildBuilder()
+    {
+        return new Debug\Builder;
+    }
+    
+    static public function log($value, $shortDump = false)
+    {
+        static::instance()->logger()->log($value, $shortDump);
+    }
+    
+    static public function trace($limit)
+    {
+        static::instance()->logger()->trace($limit);
+    }
+    
+    static public function dump($value, $shortDump = false, $echo = true)
+    {
+        $dump = static::instance()->dumper()->dump($value, $shortDump);
+        if($echo) {
+            echo $dump;
+        }
+        
+        return $dump;
+    }
+    
+    static protected function instance()
+    {
+        if(static::$instance === null) {
+            throw new Debug\Exception("Debug library has not been initialized yet");
+        }
+        
+        return static::$instance;
+    }
+
 }

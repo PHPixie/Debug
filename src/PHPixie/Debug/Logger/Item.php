@@ -36,4 +36,16 @@ class Item
         
         return $this->dumper->dump($this->value, $short);
     }
+    
+    public function asString($withTraceArguments = true, $shortValueDump = null)
+    {
+        $string = $this->traceElement->asString($withTraceArguments);
+        $string.= "\n".$this->valueDump($shortValueDump);
+        return $string;
+    }
+    
+    public function __toString()
+    {
+        return $this->asString();
+    }
 }

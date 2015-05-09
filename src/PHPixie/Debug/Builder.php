@@ -11,9 +11,19 @@ class Builder
         return $this->instance('dumper');
     }
     
+    public function errorHandler()
+    {
+        return $this->instance('errorHandler');
+    }
+    
     public function logger()
     {
         return $this->instance('logger');
+    }
+    
+    public function messages()
+    {
+        return $this->instance('messages');
     }
     
     public function tracer()
@@ -73,9 +83,19 @@ class Builder
         return new Dumper();
     }
     
+    protected function buildErrorHandler()
+    {
+        return new ErrorHandler($this);
+    }
+    
     protected function buildLogger()
     {
         return new Logger($this);
+    }
+    
+    protected function buildMessages()
+    {
+        return new Messages($this);
     }
     
     protected function buildTracer()

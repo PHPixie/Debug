@@ -110,23 +110,23 @@ class ElementTest extends \PHPixie\Test\Testcase
     }
     
     /**
-     * @covers ::getNeighboringLines
+     * @covers ::getNeighboringOffsets
      * @covers ::<protected>
      */
-    public function testGetNeighboringLines()
+    public function testGetNeighboringOffsets()
     {
         $element = $this->element;
-        $this->assertSame(array(2, 3, 4), $element->getNeighboringLines(3));
-        $this->assertSame(array(3), $element->getNeighboringLines(1));
-        $this->assertSame(array(1, 2, 3, 4, 5, 6), $element->getNeighboringLines(10));
-        $this->assertSame(array(), $element->getNeighboringLines(0));
-        $this->assertSame(array(), $element->getNeighboringLines(-1));
+        $this->assertSame(array(2, 3, 4), $element->getNeighboringOffsets(3));
+        $this->assertSame(array(3), $element->getNeighboringOffsets(1));
+        $this->assertSame(array(1, 2, 3, 4, 5, 6), $element->getNeighboringOffsets(10));
+        $this->assertSame(array(), $element->getNeighboringOffsets(0));
+        $this->assertSame(array(), $element->getNeighboringOffsets(-1));
         
         $this->line = 2;
-        $this->assertSame(array(1, 2, 3, 4), $this->element()->getNeighboringLines(4));
+        $this->assertSame(array(1, 2, 3, 4), $this->element()->getNeighboringOffsets(4));
         
         $this->line = 5;
-        $this->assertSame(array(3, 4, 5, 6), $this->element()->getNeighboringLines(4));
+        $this->assertSame(array(2, 3, 4, 5, 6), $this->element()->getNeighboringOffsets(5));
     }
     
     /**
@@ -161,9 +161,44 @@ class ElementTest extends \PHPixie\Test\Testcase
     }
     
     /**
+     * @covers ::asString
+     * @covers ::<protected>
+     */
+    public function testAsString()
+    {
+        $dumps = $this->prepareShortArgumentDumps();
+        $this->assertSame('Pixie->find('.implode(', ', $dumps).'):3', $this->element->asString());
+        
+        $this->assertSame('Pixie->find:3', $this->element->asString(false));
+        
+        $this->className = null;
+        $this->functionName = null;
+        $element = $this->element();
+        $this->assertSame($this->file.':3', $element->asString(false));
+        
+        $this->file = null;
+        $element = $this->element();
+        $this->assertSame('<unknown>:'.$this->line, $element->asString(false));
+        
+        $this->line = null;
+        $element = $this->element();
+        $this->assertSame('<unknown>', $element->asString(false));
+    }
+    
+    /**
+     * @covers ::__toString
+     * @covers ::<protected>
+     */
+    public function testToString()
+    {
+        $dumps = $this->prepareShortArgumentDumps();
+        $this->assertSame('Pixie->find('.implode(', ', $dumps).'):3', (string) $this->element);
+    }
+    
+    /**
      * @covers ::line
      * @covers ::lineContents
-     * @covers ::getNeighboringLines
+     * @covers ::getNeighboringOffsets
      * @covers ::<protected>
      */
     public function testLineOrFileUnavailable()
@@ -180,7 +215,7 @@ class ElementTest extends \PHPixie\Test\Testcase
         foreach($elements as $element) {
             $this->assertSame(null, $element->line());
             $this->assertSame(null, $element->lineContents());
-            $this->assertSame(array(), $element->getNeighboringLines(1));
+            $this->assertSame(array(), $element->getNeighboringOffsets(1));
         }
     }
     

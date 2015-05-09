@@ -56,7 +56,7 @@ class LoggerTest extends \PHPixie\Test\Testcase
     /**
      * @covers ::items
      * @covers ::clearItems
-     * @covers ::getClearItems
+     * @covers ::getAndClearItems
      * @covers ::<protected>
      */
     public function testItems()
@@ -94,6 +94,44 @@ class LoggerTest extends \PHPixie\Test\Testcase
         $this->logger->trace(2, 1);
 
         $this->assertSame($items, $this->logger->items());
+    }
+    
+    /**
+     * @covers ::asString
+     * @covers ::__toString
+     * @covers ::<protected>
+     */
+    public function testAsString()
+    {
+        $items = array();
+        
+        $items[]= $this->prepareItem(5);
+        $this->logger->log(5);
+        
+        $items[]= $this->prepareItem(5);
+        $this->logger->log(5);
+        
+        $string = $this->prepareAsString($items);
+        $this->assertSame($string, $this->logger->asString());
+        
+        $string = $this->prepareAsString($items, false, true);
+        $this->assertSame($string, $this->logger->asString(false, true));
+        
+        $string = $this->prepareAsString($items);
+        $this->assertSame($string, (string) $this->logger);
+    }
+    
+    protected function prepareAsString($items, $withTraceArguments = true, $shortValueDump = null)
+    {
+        $itemStrings = array();
+        
+        foreach($items as $key => $item) {
+            $itemString = "s$key";
+            $this->method($item, 'asString', $itemString, array($withTraceArguments, $shortValueDump), 0);
+            $itemStrings[]= $itemString;
+        }
+        
+        return implode("\n\n", $itemStrings);
     }
     
     protected function prepareTrace($limit = null, $backtraceOffset = 0)

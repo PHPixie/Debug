@@ -57,5 +57,24 @@ class Logger
         $this->clearItems();
         return $items;
     }
+    
+    public function asString($withTraceArguments = true, $shortValueDump = null)
+    {
+        $string = '';
+        foreach($this->items as $key => $item) {
+            if($key > 0) {
+                $string.="\n\n";
+            }
+            
+            $string.= $item->asString($withTraceArguments, $shortValueDump);
+        }
+        
+        return $string;
+    }
+    
+    public function __toString()
+    {
+        return $this->asString();
+    }
 
 }

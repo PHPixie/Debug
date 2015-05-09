@@ -10,9 +10,14 @@ class ErrorHandlerTest extends \PHPixie\Test\Testcase
     protected $builder;
     protected $errorHandler;
     
+    protected $messages;
+    
     public function setUp()
     {
-        $this->builder      = $this->quickMock('\PHPixie\Debug\Builder');
+        $this->builder = $this->quickMock('\PHPixie\Debug\Builder');
+        
+        $this->messages = $this->quickMock('\PHPixie\Debug\Messages');
+        $this->method($this->builder, 'messages', $this->messages, array());
     }
     
     /**
@@ -21,7 +26,7 @@ class ErrorHandlerTest extends \PHPixie\Test\Testcase
      */
     public function testConstruct()
     {
-        
+        $this->errorHandler = new \PHPixie\Debug\ErrorHandler($this->builder);
     }
     
     /**
@@ -89,10 +94,7 @@ class ErrorHandlerTest extends \PHPixie\Test\Testcase
      */
     public function testRegisterExceptionHandler()
     {
-        $this->errorHandler = $this->errorHandlerMock(array(
-            'setExceptionHandler',
-            'handleException'
-        ));
+        $this->errorHandler = $this->errorHandlerMock(array('setExceptionHandler'));
         
         $handler = null;
         $this->method($this->errorHandler, 'setExceptionHandler', function($callback) use(&$handler) {
@@ -102,9 +104,13 @@ class ErrorHandlerTest extends \PHPixie\Test\Testcase
         $this->errorHandler->registerExceptionHandler();
         
         $exception = $this->quickMock('\stdClass');
-        $this->method($this->errorHandler, 'handleException', null, array($exception), 0);
         
+        $this->method($this->messages, 'exception', 'pixie', array($exception), 0);
+        
+        ob_start();
         $handler($exception);
+        $string = ob_get_clean();
+        $this->assertSame('pixie', $string);
     }
     
     /**
@@ -120,6 +126,6 @@ class ErrorHandlerTest extends \PHPixie\Test\Testcase
     
     protected function errorHandlerMock($methods = array())
     {
-        return $this->quickMock('\PHPixie\Debug\ErrorHandler', $methods);
+        return $this->getMock('\PHPixie\Debug\ErrorHandler', $methods, array($this->builder));
     }
 }

@@ -127,7 +127,7 @@ class Element
         return $context;
     }
     
-    public function getNeighboringLines($maxAmount)
+    public function getNeighboringOffsets($maxAmount)
     {
         if(!$this->lineAndFileAvailable()) {
             return array();
@@ -161,6 +161,32 @@ class Element
         return range($start, $start + $amount - 1);
     }
     
+    public function asString($withArguments = true)
+    {
+        $context = $this->context($withArguments);
+        
+        if($context !== null) {
+            $string = $context;
+            
+        }elseif($this->file !== null) {
+            $string = $this->file;
+            
+        }else{
+            $string = '<unknown>';
+        }
+        
+        if($this->line !== null) {
+            $string.= ':'.$this->line;
+        }
+        
+        return $string;
+    }
+    
+    public function __toString()
+    {
+        return $this->asString();
+    }
+    
     protected function lineAndFileAvailable()
     {
         return $this->line !== null && $this->file !== null;
@@ -172,4 +198,5 @@ class Element
             $this->lineContents = file($this->file);
         }
     }
+    
 }

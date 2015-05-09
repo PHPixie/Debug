@@ -27,6 +27,21 @@ class BuilderTest extends \PHPixie\Test\Testcase
     }
     
     /**
+     * @covers ::errorHandler
+     * @covers ::<protected>
+     */
+    public function testErrorHandler()
+    {
+        $errorHandler = $this->builder->errorHandler(array(
+            'builder' => $this->builder
+        ));
+        
+        $this->assertInstance($errorHandler, '\PHPixie\Debug\ErrorHandler');
+        $this->assertSame($errorHandler, $this->builder->errorHandler());
+    }
+    
+    
+    /**
      * @covers ::logger
      * @covers ::<protected>
      */
@@ -38,6 +53,20 @@ class BuilderTest extends \PHPixie\Test\Testcase
             'builder' => $this->builder
         ));
         $this->assertSame($logger, $this->builder->logger());
+    }
+    
+    /**
+     * @covers ::messages
+     * @covers ::<protected>
+     */
+    public function testMessages()
+    {
+        $messages = $this->builder->messages();
+        
+        $this->assertInstance($messages, '\PHPixie\Debug\Messages', array(
+            'builder' => $this->builder
+        ));
+        $this->assertSame($messages, $this->builder->messages());
     }
     
     /**

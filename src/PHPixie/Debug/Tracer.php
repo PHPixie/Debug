@@ -11,13 +11,15 @@ class Tracer
         $this->builder = $builder;
     }
     
-    public function exception($exception)
+    public function exceptionTrace($exception, $limit = null)
     {
         $first = $this->builder->traceElement(
             $exception->getFile(),
             $exception->getLine()
         );
-        $elements = $this->elementsFromTrace($exception->getTrace());
+        
+        $trace = array_slice($exception->getTrace(), 0, $limit);
+        $elements = $this->elementsFromTrace($trace);
         
         array_unshift($elements, $first);
         return $this->builder->trace($elements);

@@ -44,10 +44,10 @@ class TracerTest extends \PHPixie\Test\Testcase
     }
     
     /**
-     * @covers ::exception
+     * @covers ::exceptionTrace
      * @covers ::<protected>
      */
-    public function testException()
+    public function testExceptionTrace()
     {
         $backtrace = array(
             array(
@@ -75,7 +75,7 @@ class TracerTest extends \PHPixie\Test\Testcase
         $trace = $this->getTrace();
         $this->method($this->builder, 'trace', $trace, array($elements), $builderAt++);
         
-        $this->assertSame($trace, $this->tracer->exception($exception));
+        $this->assertSame($trace, $this->tracer->exceptionTrace($exception));
     }
     
     /**
@@ -91,8 +91,7 @@ class TracerTest extends \PHPixie\Test\Testcase
     
     /**
      * @covers ::debugBacktrace
-     * @covers ::buildTrace
-     * @covers ::buildTraceElement
+     * @covers ::<protected>
      */
     public function testBacktracing()
     {
@@ -102,7 +101,7 @@ class TracerTest extends \PHPixie\Test\Testcase
         
         $element = $elements[0];
         $this->assertSame(__FILE__, $element->file());
-        $this->assertSame(101, $element->line());
+        $this->assertSame(100, $element->line());
     }
     
     protected function backtraceTest($withLimit = false, $withOffset = false)
