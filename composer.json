@@ -1,7 +1,7 @@
 {
-    "name": "phpixie/template",
-    "description": "Templating library for PHPixie",
-    "keywords": ["templating", "template"],
+    "name": "phpixie/debug",
+    "description": "Debugging library for PHPixie with support for logging and tracing",
+    "keywords": ["debug", "log", "trace", "dump"],
     "homepage": "http://phpixie.com",
     "type": "library",
     "license": "BSD",
@@ -12,9 +12,6 @@
             "homepage": "http://dracony.org"
         }
     ],
-    "require": {
-        "phpixie/slice": "3.*@dev"
-    },
     "require-dev": {
         "phpixie/test": "3.*@dev"
     },
