@@ -131,6 +131,9 @@ class DebugTest extends \PHPixie\Test\Testcase
         
         $this->method($this->logger, 'trace', null, array(5), 0);
         call_user_func($method, 5);
+        
+        $this->method($this->logger, 'trace', null, array(null), 0);
+        call_user_func($method);
     }
     
     /**

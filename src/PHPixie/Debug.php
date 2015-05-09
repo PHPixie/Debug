@@ -64,7 +64,7 @@ class Debug
         static::instance()->logger()->log($value, $shortDump);
     }
     
-    static public function trace($limit)
+    static public function trace($limit = null)
     {
         static::instance()->logger()->trace($limit);
     }
