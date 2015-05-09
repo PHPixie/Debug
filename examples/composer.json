@@ -1,0 +1,5 @@
+{
+    "require": {
+        "phpixie/debug": "3.*@dev"
+    }
+}

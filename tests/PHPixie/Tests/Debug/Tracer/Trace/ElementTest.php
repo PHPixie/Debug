@@ -116,17 +116,17 @@ class ElementTest extends \PHPixie\Test\Testcase
     public function testGetNeighboringOffsets()
     {
         $element = $this->element;
-        $this->assertSame(array(2, 3, 4), $element->getNeighboringOffsets(3));
-        $this->assertSame(array(3), $element->getNeighboringOffsets(1));
-        $this->assertSame(array(1, 2, 3, 4, 5, 6), $element->getNeighboringOffsets(10));
+        $this->assertSame(array(-1, 0, 1), $element->getNeighboringOffsets(3));
+        $this->assertSame(array(0), $element->getNeighboringOffsets(1));
+        $this->assertSame(array(-2, -1, 0, 1, 2, 3), $element->getNeighboringOffsets(10));
         $this->assertSame(array(), $element->getNeighboringOffsets(0));
         $this->assertSame(array(), $element->getNeighboringOffsets(-1));
         
         $this->line = 2;
-        $this->assertSame(array(1, 2, 3, 4), $this->element()->getNeighboringOffsets(4));
+        $this->assertSame(array(-1, 0, 1, 2), $this->element()->getNeighboringOffsets(4));
         
         $this->line = 5;
-        $this->assertSame(array(2, 3, 4, 5, 6), $this->element()->getNeighboringOffsets(5));
+        $this->assertSame(array(-3, -2, -1, 0, 1), $this->element()->getNeighboringOffsets(5));
     }
     
     /**

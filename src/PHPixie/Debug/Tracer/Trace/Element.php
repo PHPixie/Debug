@@ -127,38 +127,47 @@ class Element
         return $context;
     }
     
-    public function getNeighboringOffsets($maxAmount)
+    public function getNeighboringOffsets($limit)
+    {
+        $offsets = $this->getNeighboringLines($limit);
+        foreach($offsets as $key => $line) {
+            $offsets[$key] = $line - $this->line;
+        }
+        
+        return $offsets;
+    }
+    
+    protected function getNeighboringLines($limit)
     {
         if(!$this->lineAndFileAvailable()) {
             return array();
         }
         
-        $amount = $maxAmount;
         $this->requireLineContents();
         $count = count($this->lineContents);
 
-        if($amount > $count) {
-            return range(1, $count);
+        if($limit > $count) {
+            return range(1 , $count);
         }
         
-        $start = $this->line - (int) ($amount/2);
+        $start = $this->line - (int) ($limit/2);
         
         if($start < 1) {
-            return range(1, $amount);
+            return range(1, $limit);
         }
         
-        if($start + $amount - 1 > $count) {
+        if($start + $limit - 1 > $count) {
             
-            return range($count - $amount + 1, $count);
+            return range($count - $limit + 1, $count);
         }
         
-        $end = $start + $amount - 1;
+        $end = $start + $limit - 1;
         
         if($start > $end) {
             return array();
         }
         
-        return range($start, $start + $amount - 1);
+        return range($start, $start + $limit - 1);    
     }
     
     public function asString($withArguments = true)
