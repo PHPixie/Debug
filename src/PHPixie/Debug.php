@@ -44,6 +44,16 @@ class Debug
         return $log;
     }
     
+    public function exceptionMessage($exception, $backtraceLimit = null, $neighboringLines = 5, $echo = true)
+    {
+        $message = $this->builder->messages()->exception($exception, $backtraceLimit, $neighboringLines);
+        if($echo) {
+            echo $message;
+        }
+        
+        return $message;
+    }
+    
     protected function buildBuilder()
     {
         return new Debug\Builder;

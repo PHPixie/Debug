@@ -81,6 +81,28 @@ class DebugTest extends \PHPixie\Test\Testcase
     }
     
     /**
+     * @covers ::exceptionMessage
+     * @covers ::<protected>
+     */
+    public function testExceptionMessage()
+    {
+        $this->prepareDebug();
+        
+        $exception = $this->quickMock('\stdClass');
+        $this->method($this->messages, 'exception', 'test', array($exception, null, 5), 0);
+        
+        ob_start();
+        $message = $this->debug->exceptionMessage($exception);
+        $string = ob_get_clean();
+        
+        $this->assertSame('test', $message);
+        $this->assertSame('test', $string);
+        
+        $this->method($this->messages, 'exception', 'test', array($exception, 3, 4), 0);
+        $this->assertSame('test', $this->debug->exceptionMessage($exception, 3, 4, false));
+    }
+    
+    /**
      * @covers ::log
      * @covers ::<protected>
      */
