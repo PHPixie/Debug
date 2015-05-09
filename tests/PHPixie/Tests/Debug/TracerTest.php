@@ -148,7 +148,7 @@ class TracerTest extends \PHPixie\Test\Testcase
         foreach($data as $params) {
             $fields = array_fill_keys($this->traceFields, null);
             $fields = array_merge($fields, $params);
-            if($fields['class'] === '\PHPixie\Debug\ErrorHandler') {
+            if($fields['class'] === 'PHPixie\Debug\ErrorHandler') {
                 continue;
             }
             $elements[]= $this->prepareTraceElement($fields, $builderAt++);

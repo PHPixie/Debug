@@ -41,7 +41,7 @@ class Tracer
         foreach($trace as $element) {
             
             $class = $this->get($element, 'class');
-            if($class === '\PHPixie\Debug\ErrorHandler') {
+            if($class === 'PHPixie\Debug\ErrorHandler') {
                 continue;
             }
             
