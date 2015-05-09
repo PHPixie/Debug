@@ -39,12 +39,18 @@ class Tracer
     {
         $elements = array();
         foreach($trace as $element) {
+            
+            $class = $this->get($element, 'class');
+            if($class === '\PHPixie\Debug\ErrorHandler') {
+                continue;
+            }
+            
             $elements[]= $this->builder->traceElement(
                 $this->get($element, 'file'),
                 $this->get($element, 'line'),
                 $this->get($element, 'function'),
                 $this->get($element, 'args'),
-                $this->get($element, 'class'),
+                $class,
                 $this->get($element, 'object'),
                 $this->get($element, 'type')
             );

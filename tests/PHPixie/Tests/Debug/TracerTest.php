@@ -55,6 +55,9 @@ class TracerTest extends \PHPixie\Test\Testcase
                 'line'     => 3
             ),
             array(
+                'class'    => '\PHPixie\Debug\ErrorHandler'
+            ),
+            array(
                 'file'     => 'fairy',
                 'line'     => 5
             )
@@ -101,7 +104,7 @@ class TracerTest extends \PHPixie\Test\Testcase
         
         $element = $elements[0];
         $this->assertSame(__FILE__, $element->file());
-        $this->assertSame(100, $element->line());
+        $this->assertSame(103, $element->line());
     }
     
     protected function backtraceTest($withLimit = false, $withOffset = false)
@@ -145,6 +148,9 @@ class TracerTest extends \PHPixie\Test\Testcase
         foreach($data as $params) {
             $fields = array_fill_keys($this->traceFields, null);
             $fields = array_merge($fields, $params);
+            if($fields['class'] === '\PHPixie\Debug\ErrorHandler') {
+                continue;
+            }
             $elements[]= $this->prepareTraceElement($fields, $builderAt++);
         }
         
