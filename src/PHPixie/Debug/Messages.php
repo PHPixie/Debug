@@ -65,7 +65,7 @@ class Messages
             if($key > 0) {
                 $string.= "\n";
             }
-            $string.= $prefix.$traceElement->lineContents($offset);
+            $string.= $prefix.' '.$traceElement->lineContents($offset);
         }
         
         return $string;

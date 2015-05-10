@@ -137,6 +137,6 @@ class MessagesTest extends \PHPixie\Test\Testcase
             return $offsetLines[$offset];
         });
         
-        return "98 pixie\n>>>trixie\n100stella";
+        return "98  pixie\n>>> trixie\n100 stella";
     }
 }
