@@ -66,7 +66,7 @@ class Logger
                 $string.="\n\n";
             }
             
-            $string.= "[$key] ".$item->asString($withTraceArguments, $shortValueDump);
+            $string.= "#$key ".$item->asString($withTraceArguments, $shortValueDump);
         }
         
         return $string;
