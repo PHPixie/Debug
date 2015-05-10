@@ -61,7 +61,7 @@ class TraceTest extends \PHPixie\Test\Testcase
         foreach($this->elements as $key => $element) {
             $elementString = "s$key";
             $this->method($element, 'asString', $elementString, array(), 0);
-            $elementStrings[]= "\#$key ".$elementString;
+            $elementStrings[]= '#'.$key.' '.$elementString;
         }
         
         return implode("\n", $elementStrings);

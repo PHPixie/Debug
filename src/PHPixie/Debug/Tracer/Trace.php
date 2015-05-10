@@ -24,7 +24,7 @@ class Trace
                 $string.="\n";
             }
             
-            $string.= "\#$key ".$element->asString($withArguments);
+            $string.= '#'.$key.' '.$element->asString($withArguments);
         }
         
         return $string;

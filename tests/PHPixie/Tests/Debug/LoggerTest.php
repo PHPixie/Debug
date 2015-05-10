@@ -128,7 +128,7 @@ class LoggerTest extends \PHPixie\Test\Testcase
         foreach($items as $key => $item) {
             $itemString = "s$key";
             $this->method($item, 'asString', $itemString, array($withTraceArguments, $shortValueDump), 0);
-            $itemStrings[]= "#$key $itemString";
+            $itemStrings[]= '#'.$key.' '.$itemString";
         }
         
         return implode("\n\n", $itemStrings);
