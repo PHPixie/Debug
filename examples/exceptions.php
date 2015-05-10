@@ -20,14 +20,16 @@ $debug->registerHandlers();
 
 class Test
 {
-    public function a()
+    public function a($string)
     {
-        $this->b();
+        $array = array(1, 2);
+        $this->b($string, $array);
     }
     
-    public function b()
+    public function b($string, $array)
     {
-        $this->c();
+        $object = (object) array('t' => 1);
+        $this->c($string, $array, $object);
     }
     
     public function c()
@@ -37,4 +39,4 @@ class Test
 }
 
 $test = new Test();
-$test->a();
+$test->a("pixie");

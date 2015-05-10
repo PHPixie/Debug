@@ -51,7 +51,7 @@ class MessagesTest extends \PHPixie\Test\Testcase
     {
         $string = '';
         if($withTitle) {
-            $string.= "Logged items:\n";
+            $string.= "Logged items:\n\n";
         }
         
         $this->method($this->logger, 'asString', 'logString', array($withTraceArguments, $shortValueDump), 0);

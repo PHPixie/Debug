@@ -3,12 +3,12 @@
 namespace PHPixie\Tests\Debug;
 
 /**
- * @coversDefaultClass \PHPixie\Debug\ErrorHandler
+ * @coversDefaultClass \PHPixie\Debug\Handlers
  */
-class ErrorHandlerTest extends \PHPixie\Test\Testcase
+class HandlersTest extends \PHPixie\Test\Testcase
 {
     protected $builder;
-    protected $errorHandler;
+    protected $handlers;
     
     protected $messages;
     
@@ -26,7 +26,7 @@ class ErrorHandlerTest extends \PHPixie\Test\Testcase
      */
     public function testConstruct()
     {
-        $this->errorHandler = new \PHPixie\Debug\ErrorHandler($this->builder);
+        $this->handlers = new \PHPixie\Debug\Handlers($this->builder);
     }
     
     /**
@@ -35,15 +35,19 @@ class ErrorHandlerTest extends \PHPixie\Test\Testcase
      */
     public function testRegister()
     {
-        $this->errorHandler = $this->errorHandlerMock(array(
+        $this->handlers = $this->handlersMock(array(
             'registerErrorHandler',
             'registerExceptionHandler',
+            'registerShutdownLogHandler',
         ));
         
-        $this->method($this->errorHandler, 'registerErrorHandler', null, array(), 0);
-        $this->method($this->errorHandler, 'registerExceptionHandler', null, array(), 1);
+        $this->method($this->handlers, 'registerErrorHandler', null, array(), 'once');
+        $this->method($this->handlers, 'registerExceptionHandler', null, array(), 'once');
+        $this->handlers->register();
         
-        $this->errorHandler->register();
+        $this->method($this->handlers, 'registerShutdownLogHandler', null, array(), 'once');
+        $this->handlers->register(true, false, false);
+
     }
     
     /**
@@ -52,14 +56,14 @@ class ErrorHandlerTest extends \PHPixie\Test\Testcase
      */
     public function testRegisterErrorHandler()
     {
-        $this->errorHandler = $this->errorHandlerMock(array('setErrorHandler'));
+        $this->handlers = $this->handlersMock(array('setErrorHandler'));
         
         $handler = null;
-        $this->method($this->errorHandler, 'setErrorHandler', function($callback) use(&$handler) {
+        $this->method($this->handlers, 'setErrorHandler', function($callback) use(&$handler) {
             $handler = $callback;
         });
         
-        $this->errorHandler->registerErrorHandler();
+        $this->handlers->registerErrorHandler();
         
         $params = array(
             'severity' => 1,
@@ -94,14 +98,14 @@ class ErrorHandlerTest extends \PHPixie\Test\Testcase
      */
     public function testRegisterExceptionHandler()
     {
-        $this->errorHandler = $this->errorHandlerMock(array('setExceptionHandler'));
+        $this->handlers = $this->handlersMock(array('setExceptionHandler'));
         
         $handler = null;
-        $this->method($this->errorHandler, 'setExceptionHandler', function($callback) use(&$handler) {
+        $this->method($this->handlers, 'setExceptionHandler', function($callback) use(&$handler) {
             $handler = $callback;
         });
         
-        $this->errorHandler->registerExceptionHandler();
+        $this->handlers->registerExceptionHandler();
         
         $exception = $this->quickMock('\stdClass');
         
@@ -114,18 +118,43 @@ class ErrorHandlerTest extends \PHPixie\Test\Testcase
     }
     
     /**
+     * @covers ::registerShutdownLogHandler
+     * @covers ::<protected>
+     */
+    public function testRegisterShutdownLogHandler()
+    {
+        $this->handlers = $this->handlersMock(array('setShutdownHandler'));
+        
+        $handler = null;
+        $this->method($this->handlers, 'setShutdownHandler', function($callback) use(&$handler) {
+            $handler = $callback;
+        });
+        
+        $this->handlers->registerShutdownLogHandler();
+        
+        $this->method($this->messages, 'log', 'pixie', array(), 0);
+        
+        ob_start();
+        $handler();
+        $string = ob_get_clean();
+        $this->assertSame('pixie', $string);
+    }
+    
+    /**
      * @covers ::setErrorHandler
      * @covers ::setExceptionHandler
+     * @covers ::setShutdownHandler
      * @runInSeparateProcess
      */
     public function testSetHandlers()
     {
-        $this->errorHandler = new \PHPixie\Debug\ErrorHandler($this->builder);
-        $this->errorHandler->register();
+        $builder = new \PHPixie\Debug\Builder();
+        $this->handlers = new \PHPixie\Debug\Handlers($builder);
+        $this->handlers->register(true);
     }
     
-    protected function errorHandlerMock($methods = array())
+    protected function handlersMock($methods = array())
     {
-        return $this->getMock('\PHPixie\Debug\ErrorHandler', $methods, array($this->builder));
+        return $this->getMock('\PHPixie\Debug\Handlers', $methods, array($this->builder));
     }
 }

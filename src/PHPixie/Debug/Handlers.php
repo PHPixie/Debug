@@ -2,7 +2,7 @@
 
 namespace PHPixie\Debug;
 
-class ErrorHandler
+class Handlers
 {
     protected $builder;
     
@@ -11,10 +11,19 @@ class ErrorHandler
         $this->builder = $builder;
     }
     
-    public function register()
+    public function register($shutdownLog = false, $exception = true, $error = true)
     {
-        $this->registerErrorHandler();
-        $this->registerExceptionHandler();
+        if($error) {
+            $this->registerErrorHandler();
+        }
+        
+        if($exception) {
+            $this->registerExceptionHandler();
+        }
+        
+        if($shutdownLog) {
+            $this->registerShutdownLogHandler();
+        }
     }
     
     public function registerErrorHandler()
@@ -33,6 +42,14 @@ class ErrorHandler
         });
     }
     
+    public function registerShutdownLogHandler()
+    {
+        $self = $this;
+        $this->setShutdownHandler(function() use($self) {
+            $self->handleShutdownLog();
+        });
+    }
+    
     protected function handleError($level, $message, $file, $line)
     {
         throw new \ErrorException($message, 0, $level, $file, $line);
@@ -44,6 +61,12 @@ class ErrorHandler
         echo $messages->exception($exception);
     }
     
+    protected function handleShutdownLog()
+    {
+        $messages = $this->builder->messages();
+        echo $messages->log();
+    }
+    
     protected function setErrorHandler($callback)
     {
         set_error_handler($callback);
@@ -52,5 +75,10 @@ class ErrorHandler
     protected function setExceptionHandler($callback)
     {
         set_exception_handler($callback);
+    }
+    
+    protected function setShutdownHandler($callback)
+    {
+        register_shutdown_function($callback);
     }
 }

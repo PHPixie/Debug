@@ -11,9 +11,9 @@ class Builder
         return $this->instance('dumper');
     }
     
-    public function errorHandler()
+    public function handlers()
     {
-        return $this->instance('errorHandler');
+        return $this->instance('handlers');
     }
     
     public function logger()
@@ -83,9 +83,9 @@ class Builder
         return new Dumper();
     }
     
-    protected function buildErrorHandler()
+    protected function buildHandlers()
     {
-        return new ErrorHandler($this);
+        return new Handlers($this);
     }
     
     protected function buildLogger()

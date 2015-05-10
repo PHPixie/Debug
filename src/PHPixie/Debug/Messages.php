@@ -36,7 +36,7 @@ class Messages
     {
         $string = '';
         if($withTitle) {
-            $string.= "Logged items:\n";
+            $string.= "Logged items:\n\n";
         }
         
         $logger = $this->builder->logger();

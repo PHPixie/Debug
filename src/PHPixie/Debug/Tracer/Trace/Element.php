@@ -170,23 +170,31 @@ class Element
         return range($start, $start + $limit - 1);    
     }
     
-    public function asString($withArguments = true)
+    public function asString($withArguments = true, $withContext = true)
     {
-        $context = $this->context($withArguments);
+        $string = $this->location();
         
-        if($context !== null) {
-            $string = $context;
-            
-        }elseif($this->file !== null) {
+        if($withContext) {
+            $context = $this->context($withArguments);
+            if($context !== null) {
+                $string.= "\n    ".$context;
+            }
+        }
+        
+        return $string;
+    }
+    
+    public function location()
+    {
+        if($this->file !== null) {
             $string = $this->file;
-            
         }else{
             $string = '<unknown>';
         }
         
         if($this->line !== null) {
             $string.= ':'.$this->line;
-        }
+        }   
         
         return $string;
     }

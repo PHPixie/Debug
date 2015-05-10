@@ -128,7 +128,7 @@ class LoggerTest extends \PHPixie\Test\Testcase
         foreach($items as $key => $item) {
             $itemString = "s$key";
             $this->method($item, 'asString', $itemString, array($withTraceArguments, $shortValueDump), 0);
-            $itemStrings[]= $itemString;
+            $itemStrings[]= "[$key] $itemString";
         }
         
         return implode("\n\n", $itemStrings);
@@ -136,7 +136,7 @@ class LoggerTest extends \PHPixie\Test\Testcase
     
     protected function prepareTrace($limit = null, $backtraceOffset = 0)
     {
-        $trace = $this->prepareGetTrace($limit, 1+$backtraceOffset);
+        $trace = $this->prepareGetTrace($limit, $backtraceOffset);
         $traceElement = $this->quickMock('\PHPixie\Debug\Tracer\Trace\Element');
         $this->method($trace, 'elements', array($traceElement), array(), 0);
         

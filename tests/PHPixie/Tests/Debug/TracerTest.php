@@ -55,7 +55,7 @@ class TracerTest extends \PHPixie\Test\Testcase
                 'line'     => 3
             ),
             array(
-                'class'    => '\PHPixie\Debug\ErrorHandler'
+                'class'    => 'PHPixie\Debug\Handlers'
             ),
             array(
                 'file'     => 'fairy',
@@ -148,7 +148,7 @@ class TracerTest extends \PHPixie\Test\Testcase
         foreach($data as $params) {
             $fields = array_fill_keys($this->traceFields, null);
             $fields = array_merge($fields, $params);
-            if($fields['class'] === 'PHPixie\Debug\ErrorHandler') {
+            if($fields['class'] === 'PHPixie\Debug\Handlers') {
                 continue;
             }
             $elements[]= $this->prepareTraceElement($fields, $builderAt++);

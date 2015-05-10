@@ -24,14 +24,9 @@ class Debug
         return $this->builder->logger();
     }
     
-    public function dumper()
+    public function registerHandlers($shutdownLog = false, $exception = true, $error = true)
     {
-        return $this->builder->dumper();
-    }
-    
-    public function registerHandlers()
-    {
-        $this->builder->errorHandler()->register();
+        $this->builder->handlers()->register($shutdownLog, $exception, $error);
     }
     
     public function dumpLog($withTitle = true, $withTraceArguments = true, $shortValueDump = null, $echo = true)
@@ -61,17 +56,17 @@ class Debug
     
     static public function log($value, $shortDump = false)
     {
-        static::instance()->logger()->log($value, $shortDump);
+        static::instanceBuilder()->logger()->log($value, $shortDump, 1);
     }
     
-    static public function trace($limit = null)
+    static public function logTrace($limit = null, $offset = 0)
     {
-        static::instance()->logger()->trace($limit);
+        static::instanceBuilder()->logger()->trace($limit, 1+$offset);
     }
     
     static public function dump($value, $shortDump = false, $echo = true)
     {
-        $dump = static::instance()->dumper()->dump($value, $shortDump);
+        $dump = static::instanceBuilder()->dumper()->dump($value, $shortDump);
         if($echo) {
             echo "\n$dump\n";
         }
@@ -79,13 +74,23 @@ class Debug
         return $dump;
     }
     
-    static protected function instance()
+    static public function trace($limit = null, $offset = 0, $echo = true)
+    {
+        $trace = static::instanceBuilder()->tracer()->backtrace($limit, 1+$offset);
+        if($echo) {
+            echo "\n$trace\n";
+        }
+        
+        return $trace;
+    }
+    
+    static protected function instanceBuilder()
     {
         if(static::$instance === null) {
             throw new Debug\Exception("Debug library has not been initialized yet");
         }
         
-        return static::$instance;
+        return static::$instance->builder;
     }
 
 }

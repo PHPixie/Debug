@@ -39,7 +39,7 @@ class Item
     
     public function asString($withTraceArguments = true, $shortValueDump = null)
     {
-        $string = $this->traceElement->asString($withTraceArguments);
+        $string = $this->traceElement->asString($withTraceArguments, false);
         $string.= "\n".$this->valueDump($shortValueDump);
         return $string;
     }

@@ -27,17 +27,17 @@ class BuilderTest extends \PHPixie\Test\Testcase
     }
     
     /**
-     * @covers ::errorHandler
+     * @covers ::handlers
      * @covers ::<protected>
      */
-    public function testErrorHandler()
+    public function testHandlers()
     {
-        $errorHandler = $this->builder->errorHandler(array(
+        $handlers = $this->builder->handlers(array(
             'builder' => $this->builder
         ));
         
-        $this->assertInstance($errorHandler, '\PHPixie\Debug\ErrorHandler');
-        $this->assertSame($errorHandler, $this->builder->errorHandler());
+        $this->assertInstance($handlers, '\PHPixie\Debug\Handlers');
+        $this->assertSame($handlers, $this->builder->handlers());
     }
     
     

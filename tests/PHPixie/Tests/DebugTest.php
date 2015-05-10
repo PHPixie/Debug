@@ -12,14 +12,15 @@ class DebugTest extends \PHPixie\Test\Testcase
     protected $builder;
     
     protected $dumper;
-    protected $errorHandler;
+    protected $handlers;
     protected $logger;
     protected $messages;
+    protected $tracer;
     
     public function setUp()
     {
         $this->builder = $this->quickMock('\PHPixie\Debug\Builder');
-        foreach(array('dumper', 'errorHandler', 'logger', 'messages') as $name) {
+        foreach(array('dumper', 'handlers', 'logger', 'messages', 'tracer') as $name) {
             $this->$name  = $this->quickMock('\PHPixie\Debug\\'.ucfirst($name));
             $this->method($this->builder, $name, $this->$name, array());
         }
@@ -36,14 +37,13 @@ class DebugTest extends \PHPixie\Test\Testcase
     
     /**
      * @covers ::builder
-     * @covers ::dumper
      * @covers ::logger
      * @covers ::<protected>
      */
     public function testInstances()
     {
         $this->prepareDebug();
-        foreach(array('builder', 'dumper', 'logger') as $name) {
+        foreach(array('builder', 'logger') as $name) {
             $this->assertSame($this->$name, $this->debug->$name());
         }
     }
@@ -55,8 +55,12 @@ class DebugTest extends \PHPixie\Test\Testcase
     public function testRegisterHandlers()
     {
         $this->prepareDebug();
-        $this->method($this->errorHandler, 'register', null, array(), 0);
+        
+        $this->method($this->handlers, 'register', null, array(false, true, true), 0);
         $this->debug->registerHandlers();
+        
+        $this->method($this->handlers, 'register', null, array(true, false, false), 0);
+        $this->debug->registerHandlers(true, false, false);
     }
     
     /**
@@ -112,27 +116,27 @@ class DebugTest extends \PHPixie\Test\Testcase
         
         $method = get_class($this->debug).'::log';
         
-        $this->method($this->logger, 'log', null, array(5, false), 0);
+        $this->method($this->logger, 'log', null, array(5, false, 1), 0);
         call_user_func($method, 5);
         
-        $this->method($this->logger, 'log', null, array(5, true), 0);
+        $this->method($this->logger, 'log', null, array(5, true, 1), 0);
         call_user_func($method, 5, true);
     }
     
     /**
-     * @covers ::trace
+     * @covers ::logTrace
      * @covers ::<protected>
      */
-    public function testTrace()
+    public function testLogTrace()
     {
         $this->prepareDebug();
         
-        $method = get_class($this->debug).'::trace';
+        $method = get_class($this->debug).'::logTrace';
         
-        $this->method($this->logger, 'trace', null, array(5), 0);
+        $this->method($this->logger, 'trace', null, array(5, 1), 0);
         call_user_func($method, 5);
         
-        $this->method($this->logger, 'trace', null, array(null), 0);
+        $this->method($this->logger, 'trace', null, array(null, 1), 0);
         call_user_func($method);
     }
     
@@ -160,7 +164,32 @@ class DebugTest extends \PHPixie\Test\Testcase
     }
     
     /**
-     * @covers ::dump
+     * @covers ::trace
+     * @covers ::<protected>
+     */
+    public function testTrace()
+    {
+        $this->prepareDebug();
+        
+        $trace = $this->quickMock('\PHPixie\Debug\Tracer\Trace');
+        $this->method($trace, '__toString', 'test', array());
+        
+        $method = get_class($this->debug).'::trace';
+        
+        $this->method($this->tracer, 'backtrace', $trace, array(null, 1), 0);
+        
+        ob_start();
+        $result = call_user_func($method);
+        $string = ob_get_clean();
+        
+        $this->assertSame($trace, $result);
+        $this->assertSame("\ntest\n", $string);
+        
+        $this->method($this->tracer, 'backtrace', $trace, array(3, 2), 0);
+        $this->assertSame($trace, call_user_func($method, 3, 1, false));
+    }
+    
+    /**
      * @covers ::<protected>
      * @runInSeparateProcess
      */

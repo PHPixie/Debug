@@ -167,9 +167,12 @@ class ElementTest extends \PHPixie\Test\Testcase
     public function testAsString()
     {
         $dumps = $this->prepareShortArgumentDumps();
-        $this->assertSame('Pixie->find('.implode(', ', $dumps).'):3', $this->element->asString());
+        $string = $this->file.':3';
+        $string.= "\n    Pixie->find(".implode(', ', $dumps).")";
+        $this->assertSame($string, $this->element->asString());
         
-        $this->assertSame('Pixie->find:3', $this->element->asString(false));
+        $this->assertSame($this->file.":3\n    Pixie->find", $this->element->asString(false));
+        $this->assertSame($this->file.':3', $this->element->asString(false, false));
         
         $this->className = null;
         $this->functionName = null;
@@ -178,11 +181,28 @@ class ElementTest extends \PHPixie\Test\Testcase
         
         $this->file = null;
         $element = $this->element();
-        $this->assertSame('<unknown>:'.$this->line, $element->asString(false));
+        $this->assertSame('<unknown>:'.$this->line, $element->asString(false, false));
         
         $this->line = null;
         $element = $this->element();
-        $this->assertSame('<unknown>', $element->asString(false));
+        $this->assertSame('<unknown>', $element->asString(false, false));
+    }
+    
+    /**
+     * @covers ::location
+     * @covers ::<protected>
+     */
+    public function testLocation()
+    {
+        $this->assertSame($this->file.':3', $this->element->location());
+        
+        $this->file = null;
+        $element = $this->element();
+        $this->assertSame('<unknown>:'.$this->line, $element->location());
+        
+        $this->line = null;
+        $element = $this->element();
+        $this->assertSame('<unknown>', $element->location());
     }
     
     /**
@@ -192,7 +212,9 @@ class ElementTest extends \PHPixie\Test\Testcase
     public function testToString()
     {
         $dumps = $this->prepareShortArgumentDumps();
-        $this->assertSame('Pixie->find('.implode(', ', $dumps).'):3', (string) $this->element);
+        $string = $this->file.':3';
+        $string.= "\n    Pixie->find(".implode(', ', $dumps).")";
+        $this->assertSame($string, (string) $this->element);
     }
     
     /**
