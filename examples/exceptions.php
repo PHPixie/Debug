@@ -15,7 +15,8 @@ echo "\n-------\n";
 
 
 //Register handlers to pretty print
-//all exception automatically
+//all exception automatically.
+//Logged items will also be printed
 $debug->registerHandlers();
 
 class Test

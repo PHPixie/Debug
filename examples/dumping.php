@@ -34,7 +34,7 @@ class Test
     
     public function c()
     {
-        Debug::dumpTrace();
+        Debug::trace();
     }
 }
 

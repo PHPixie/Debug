@@ -58,13 +58,14 @@ class Handlers
     protected function handleException($exception)
     {
         $messages = $this->builder->messages();
-        echo $messages->exception($exception);
+        echo "\n\n".$messages->exception($exception);
+        echo "\n\n".$messages->log();
     }
     
     protected function handleShutdownLog()
     {
         $messages = $this->builder->messages();
-        echo $messages->log();
+        echo "\n\n".$messages->log();
     }
     
     protected function setErrorHandler($callback)

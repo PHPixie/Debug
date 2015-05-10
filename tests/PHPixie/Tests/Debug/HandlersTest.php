@@ -110,11 +110,12 @@ class HandlersTest extends \PHPixie\Test\Testcase
         $exception = $this->quickMock('\stdClass');
         
         $this->method($this->messages, 'exception', 'pixie', array($exception), 0);
+        $this->method($this->messages, 'log', 'trixie', array(), 1);
         
         ob_start();
         $handler($exception);
         $string = ob_get_clean();
-        $this->assertSame('pixie', $string);
+        $this->assertSame("\n\npixie\n\ntrixie", $string);
     }
     
     /**
@@ -137,7 +138,7 @@ class HandlersTest extends \PHPixie\Test\Testcase
         ob_start();
         $handler();
         $string = ob_get_clean();
-        $this->assertSame('pixie', $string);
+        $this->assertSame("\n\npixie", $string);
     }
     
     /**
