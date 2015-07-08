@@ -33,7 +33,7 @@ class Debug
     {
         $log = $this->builder->messages()->log($withTitle, $withTraceArguments, $shortValueDump);
         if($echo) {
-            echo "\n$log\n";
+            static::output($log);
         }
         
         return $log;
@@ -43,10 +43,15 @@ class Debug
     {
         $message = $this->builder->messages()->exception($exception, $backtraceLimit, $neighboringLines);
         if($echo) {
-            echo "\n$message\n";
+            static::output($message);
         }
         
         return $message;
+    }
+    
+    public function exceptionTrace($exception, $backtraceLimit = null)
+    {
+        return $this->builder->tracer()->exceptionTrace($exception, $backtraceLimit);
     }
     
     protected function buildBuilder()
@@ -68,7 +73,7 @@ class Debug
     {
         $dump = static::instanceBuilder()->dumper()->dump($value, $shortDump);
         if($echo) {
-            echo "\n$dump\n";
+            static::output($dump);
         }
         
         return $dump;
@@ -78,10 +83,15 @@ class Debug
     {
         $trace = static::instanceBuilder()->tracer()->backtrace($limit, 1+$offset);
         if($echo) {
-            echo "\n$trace\n";
+            static::output($trace);
         }
         
         return $trace;
+    }
+    
+    static protected function output($string)
+    {
+        echo "\n$string\n";
     }
     
     static protected function instanceBuilder()
