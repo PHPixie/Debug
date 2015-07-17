@@ -107,6 +107,27 @@ class DebugTest extends \PHPixie\Test\Testcase
     }
     
     /**
+     * @covers ::exceptionTrace
+     * @covers ::<protected>
+     */
+    public function testExceptionTrace()
+    {
+        $this->prepareDebug();
+        
+        $exception = $this->quickMock('\stdClass');
+        
+        $trace = $this->quickMock('\PHPixie\Debug\Tracer\Trace');
+        $this->method($this->tracer, 'exceptionTrace', $trace, array($exception, 3), 0);
+        
+        $this->assertSame($trace, $this->debug->exceptionTrace($exception, 3));
+        
+        $trace = $this->quickMock('\PHPixie\Debug\Tracer\Trace');
+        $this->method($this->tracer, 'exceptionTrace', $trace, array($exception, null), 0);
+        
+        $this->assertSame($trace, $this->debug->exceptionTrace($exception));
+    }
+    
+    /**
      * @covers ::log
      * @covers ::<protected>
      */
