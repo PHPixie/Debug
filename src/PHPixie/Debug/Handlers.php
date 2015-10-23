@@ -5,27 +5,27 @@ namespace PHPixie\Debug;
 class Handlers
 {
     protected $builder;
-    
+
     public function __construct($builder)
     {
         $this->builder = $builder;
     }
-    
+
     public function register($shutdownLog = false, $exception = true, $error = true)
     {
         if($error) {
             $this->registerErrorHandler();
         }
-        
+
         if($exception) {
             $this->registerExceptionHandler();
         }
-        
+
         if($shutdownLog) {
             $this->registerShutdownLogHandler();
         }
     }
-    
+
     public function registerErrorHandler()
     {
         $self = $this;
@@ -33,7 +33,7 @@ class Handlers
             $self->handleError($level, $message, $file, $line);
         });
     }
-    
+
     public function registerExceptionHandler()
     {
         $self = $this;
@@ -41,7 +41,7 @@ class Handlers
             $self->handleException($exception);
         });
     }
-    
+
     public function registerShutdownLogHandler()
     {
         $self = $this;
@@ -49,35 +49,35 @@ class Handlers
             $self->handleShutdownLog();
         });
     }
-    
-    protected function handleError($level, $message, $file, $line)
+
+    public function handleError($level, $message, $file, $line)
     {
         throw new \ErrorException($message, 0, $level, $file, $line);
     }
-    
-    protected function handleException($exception)
+
+    public function handleException($exception)
     {
         $messages = $this->builder->messages();
         echo "\n\n".$messages->exception($exception);
         echo "\n\n".$messages->log();
     }
-    
-    protected function handleShutdownLog()
+
+    public function handleShutdownLog()
     {
         $messages = $this->builder->messages();
         echo "\n\n".$messages->log();
     }
-    
+
     protected function setErrorHandler($callback)
     {
         set_error_handler($callback);
     }
-    
+
     protected function setExceptionHandler($callback)
     {
         set_exception_handler($callback);
     }
-    
+
     protected function setShutdownHandler($callback)
     {
         register_shutdown_function($callback);
