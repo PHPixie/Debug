@@ -27,7 +27,7 @@ class Element
         $this->file         = $file;
         $this->line         = $line;
         $this->functionName = $functionName;
-        $this->arguments    = $arguments;
+        $this->arguments    = empty($arguments) ? array() : $arguments;
         $this->className    = $className;
         $this->object       = $object;
         $this->type         = $type;
